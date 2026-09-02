@@ -53,11 +53,7 @@ async function callOpenAI(systemPrompt, userPrompt) {
     response_format: { type: "json_object" }
   };
 
-  if (!isReasoningModel) {
-    bodyPayload.temperature = 0.7;
-  }
-
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  let response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -68,14 +64,45 @@ async function callOpenAI(systemPrompt, userPrompt) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    const message = errorData.error?.message || `Error ${response.status}: ${response.statusText}`;
-    throw new Error(`OpenAI API Error: ${message}`);
+    const rawMsg = errorData.error?.message || "";
+
+    // Retry with single user message fallback if response_format or role had an issue
+    if (rawMsg.includes("response_format") || rawMsg.includes("developer") || rawMsg.includes("system") || rawMsg.includes("temperature")) {
+      const fallbackPayload = {
+        model,
+        messages: [
+          { role: "user", content: `${systemPrompt}\n\nIMPORTANTE: Responde únicamente con el JSON solicitado sin texto adicional.\n\nContenido:\n${userPrompt}` }
+        ]
+      };
+      response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(fallbackPayload)
+      });
+    }
+
+    if (!response.ok) {
+      const retryError = await response.json().catch(() => ({}));
+      const message = retryError.error?.message || rawMsg || `Error ${response.status}: ${response.statusText}`;
+      throw new Error(`OpenAI API Error: ${message}`);
+    }
   }
 
   const data = await response.json();
-  const content = data.choices?.[0]?.message?.content;
-  if (!content) throw new Error("No se recibió respuesta de OpenAI.");
-  return JSON.parse(content);
+  const rawContent = data.choices?.[0]?.message?.content;
+  if (!rawContent) throw new Error("No se recibió respuesta de OpenAI.");
+
+  try {
+    const jsonMatch = rawContent.match(/```(?:json)?\s*([\s\S]*?)\s*```/) || [null, rawContent];
+    const cleanJson = (jsonMatch[1] || rawContent).trim();
+    return JSON.parse(cleanJson);
+  } catch (e) {
+    console.error("Error parseando respuesta JSON:", rawContent);
+    throw new Error("La IA no devolvió un formato JSON válido. Intenta nuevamente.");
+  }
 }
 
 async function generateMapWithAi(topicOrText) {
