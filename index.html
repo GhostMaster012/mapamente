@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapa Conceptual</title>
+  <meta name="theme-color" content="#17222d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MapaMente" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Fira+Sans:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">✦</span><span>Mapa<span class="brand-accent">Mente</span></span></div>
+      <div class="topbar-actions">
+        <button class="button button-ghost" id="trifoldButton" type="button">Crear tríptico</button>
+        <button class="button button-ghost" id="fullscreenButton" type="button">▣ Pantalla completa</button>
+        <button class="button button-ghost" id="ethicsButton" type="button">Mapa completo</button>
+        <button class="button button-ghost" id="classButton" type="button">Lo visto en clase</button>
+        <button class="button button-ghost" id="personalButton" type="button">Lo que llevé</button>
+        <button class="button button-ghost" id="clearButton" type="button">Limpiar</button>
+        <button class="button button-outline" id="exportPngButton" type="button">🖼 Exportar PNG</button>
+        <button class="button button-primary" id="exportButton" type="button"><span>⇩</span> Exportar PDF</button>
+      </div>
+    </header>
+
+    <section class="workspace" id="mapWorkspace">
+      <aside class="sidebar">
+        <div class="sidebar-heading">
+          <span class="eyebrow">EDITOR</span>
+          <h1>Construye tu mapa</h1>
+          <p>Organiza tus ideas de forma visual y clara.</p>
+        </div>
+
+        <label class="field-label" for="titleInput">Título del mapa</label>
+        <input class="text-input title-input" id="titleInput" type="text" placeholder="Ej. La fotosíntesis" maxlength="90" />
+
+        <div class="divider"></div>
+        <div class="section-title"><span class="section-number">01</span><span>Agregar nodo</span></div>
+        <form id="nodeForm" class="form-stack">
+          <input class="text-input" id="nodeTitleInput" type="text" placeholder="Nombre del concepto" maxlength="60" required />
+          <textarea class="text-input textarea" id="nodeContentInput" placeholder="Descripción o información relacionada..." maxlength="300"></textarea>
+          <button class="button button-dark button-full" type="submit"><span class="plus">＋</span> Agregar nodo</button>
+        </form>
+
+        <div class="divider"></div>
+        <div class="section-title"><span class="section-number">02</span><span>Conectar conceptos</span></div>
+        <div class="form-stack">
+          <select class="text-input" id="sourceSelect"><option value="">Concepto de origen</option></select>
+          <div class="connector-line"><span></span></div>
+          <select class="text-input" id="targetSelect"><option value="">Concepto relacionado</option></select>
+          <input class="text-input" id="relationInput" type="text" placeholder="Texto de relación (opcional)" maxlength="50" />
+          <button class="button button-outline button-full" id="connectButton" type="button">↗ Conectar nodos</button>
+        </div>
+
+        <div class="divider metadata-divider"></div>
+        <div class="section-title"><span class="section-number">03</span><span>Datos del trabajo</span></div>
+        <div class="form-stack metadata-form">
+          <input class="text-input" data-metadata-field="subject" type="text" placeholder="Materia" maxlength="80" />
+          <input class="text-input" data-metadata-field="student" type="text" placeholder="Alumno" maxlength="100" />
+          <input class="text-input" data-metadata-field="unit" type="text" placeholder="Número de la unidad" maxlength="100" />
+          <input class="text-input" data-metadata-field="activityNumber" type="text" placeholder="Número de la actividad" maxlength="80" />
+          <input class="text-input" data-metadata-field="activityName" type="text" placeholder="Nombre de la actividad" maxlength="100" />
+          <textarea class="text-input metadata-textarea" data-metadata-field="bibliography" placeholder="Bibliografía o fuentes" maxlength="500"></textarea>
+          <input class="text-input" data-metadata-field="dueDate" type="text" placeholder="Fecha de entrega" maxlength="50" />
+        </div>
+
+        <div class="sidebar-footer">
+          <span class="status-dot"></span>
+          <span>Guardado automáticamente</span>
+        </div>
+      </aside>
+
+      <section class="canvas-area">
+        <div class="map-heading">
+          <span class="eyebrow">MAPA CONCEPTUAL</span>
+          <h2 id="mapTitleDisplay">Mi mapa conceptual</h2>
+        </div>
+        <div class="canvas-toolbar">
+          <div class="toolbar-info"><span class="canvas-label">LIENZO</span><span class="node-count" id="nodeCount">0 conceptos</span><span class="selection-count" id="selectionCount">0 seleccionados</span></div>
+          <div class="canvas-actions">
+            <button class="button button-small" id="undoButton" type="button" title="Deshacer (Ctrl+Z)" disabled>↶ Deshacer</button>
+            <button class="button button-small" id="redoButton" type="button" title="Rehacer (Ctrl+Y)" disabled>↷ Rehacer</button>
+            <div class="zoom-controls">
+              <button class="button button-small" id="zoomOutButton" type="button" title="Alejar">－</button>
+              <span class="zoom-label" id="zoomLabel">100%</span>
+              <button class="button button-small" id="zoomInButton" type="button" title="Acercar">＋</button>
+              <button class="button button-small" id="zoomResetButton" type="button" title="Restablecer zoom">1:1</button>
+            </div>
+            <label class="toolbar-select-label" for="mapThemeSelect">Estilo</label>
+            <select class="text-input toolbar-select" id="mapThemeSelect" aria-label="Estilo visual del mapa">
+              <option value="mint">Menta</option>
+              <option value="ocean">Océano</option>
+              <option value="lavender">Lavanda</option>
+              <option value="sunset">Atardecer</option>
+              <option value="ink">Tinta</option>
+            </select>
+            <label class="toolbar-select-label" for="mapFontSelect">Fuente</label>
+            <select class="text-input toolbar-select" id="mapFontSelect" aria-label="Fuente del mapa">
+              <option value="dm-sans">DM Sans</option>
+              <option value="poppins">Poppins</option>
+              <option value="montserrat">Montserrat</option>
+              <option value="lora">Lora</option>
+              <option value="fira">Fira Sans</option>
+            </select>
+            <button class="button button-small" id="selectAllButton" type="button">Seleccionar todo</button>
+            <button class="button button-small" id="duplicateButton" type="button">Duplicar</button>
+            <button class="button button-small" id="lockButton" type="button">Bloquear</button>
+            <button class="button button-small" id="snapButton" type="button">Ajuste: ON</button>
+            <button class="button button-small button-danger" id="deleteSelectionButton" type="button">Borrar</button>
+            <button class="button button-small" id="arrangeButton" type="button">✣ Ordenar mapa</button>
+          </div>
+        </div>
+        <div class="map-viewport">
+          <div class="map-board" id="mapBoard">
+            <svg class="connections" id="connections" aria-hidden="true"></svg>
+            <div class="map-nodes" id="mapNodes"></div>
+            <svg class="connection-labels" id="connectionLabels" aria-hidden="true"></svg>
+            <div class="selection-box" id="selectionBox" hidden></div>
+            <div class="empty-state" id="emptyState">
+              <div class="empty-icon">✦</div>
+              <h2>Tu mapa empieza aquí</h2>
+              <p>Agrega tu primer concepto desde el panel izquierdo.</p>
+            </div>
+            <aside class="metadata-card" id="metadataCard" aria-label="Datos del trabajo">
+              <div class="metadata-card-title">DATOS DEL TRABAJO</div>
+              <div class="metadata-row"><strong>Materia:</strong><span id="metadataSubject">—</span></div>
+              <div class="metadata-row"><strong>Alumno:</strong><span id="metadataStudent">—</span></div>
+              <div class="metadata-row"><strong>Número de la unidad:</strong><span id="metadataUnit">—</span></div>
+              <div class="metadata-row"><strong>Número de la actividad:</strong><span id="metadataActivityNumber">—</span></div>
+              <div class="metadata-row"><strong>Nombre de la actividad:</strong><span id="metadataActivityName">—</span></div>
+              <div class="metadata-row metadata-sources"><strong>Bibliografía:</strong><span id="metadataBibliography">—</span></div>
+              <div class="metadata-row metadata-delivery"><strong>Fecha de entrega:</strong><span id="metadataDueDate">—</span></div>
+            </aside>
+          </div>
+        </div>
+        <p class="canvas-tip">Ctrl/Cmd + clic para seleccionar varios · arrastra sobre un espacio vacío para seleccionar por área · Delete para borrar.</p>
+      </section>
+    </section>
+
+    <section class="trifold-workspace" id="trifoldWorkspace" hidden>
+      <aside class="trifold-sidebar">
+        <span class="eyebrow">DISEÑADOR DE TRÍPTICOS</span>
+        <h1>Construye tu tríptico</h1>
+        <p>Edita cada panel y cambia entre la cara exterior y la interior.</p>
+        <label class="field-label" for="trifoldTitleInput">Título del tríptico</label>
+        <input class="text-input title-input" id="trifoldTitleInput" type="text" maxlength="90" placeholder="Ej. Cuidado del medio ambiente" />
+        <div class="divider"></div>
+        <label class="field-label" for="trifoldPanelSelect">Panel que editarás</label>
+        <select class="text-input" id="trifoldPanelSelect">
+          <option value="back">Contraportada</option>
+          <option value="flap">Solapa exterior</option>
+          <option value="front">Portada</option>
+          <option value="inside-left">Interior izquierdo</option>
+          <option value="inside-center">Interior central</option>
+          <option value="inside-right">Interior derecho</option>
+        </select>
+        <div class="form-stack trifold-form">
+          <input class="text-input" id="trifoldPanelTitle" type="text" maxlength="70" placeholder="Título del panel" />
+          <textarea class="text-input trifold-content-input" id="trifoldPanelContent" maxlength="1200" placeholder="Escribe el contenido del panel..."></textarea>
+          <select class="text-input" id="trifoldPanelTheme">
+            <option value="mint">Color menta</option>
+            <option value="coral">Color coral</option>
+            <option value="lavender">Color lila</option>
+            <option value="sun">Color amarillo</option>
+            <option value="sky">Color azul</option>
+          </select>
+          <select class="text-input" id="trifoldDesignSelect" aria-label="Estilo del tríptico">
+            <option value="editorial">Estilo editorial</option>
+            <option value="pastel">Estilo pastel</option>
+            <option value="bold">Estilo vibrante</option>
+            <option value="botanical">Estilo botánico</option>
+            <option value="minimal">Estilo minimalista</option>
+          </select>
+          <select class="text-input" id="trifoldFontSelect" aria-label="Tipografía del tríptico">
+            <option value="dm-sans">DM Sans · limpio</option>
+            <option value="poppins">Poppins · moderno</option>
+            <option value="montserrat">Montserrat · fuerte</option>
+            <option value="playfair">Playfair Display · elegante</option>
+            <option value="lora">Lora · editorial</option>
+            <option value="bebas">Bebas Neue · cartel</option>
+            <option value="fira">Fira Sans · académico</option>
+          </select>
+        </div>
+        <div class="trifold-elements-toolbar">
+          <span class="field-label">Elementos</span>
+          <button class="button button-small" id="addTrifoldTextButton" type="button">＋ Texto</button>
+          <button class="button button-small" id="addTrifoldImageButton" type="button">▧ Foto</button>
+          <button class="button button-small" id="addTrifoldShapeButton" type="button">◇ Forma</button>
+          <button class="button button-small button-danger" id="deleteTrifoldElementButton" type="button">Borrar elemento</button>
+          <input id="trifoldImageInput" type="file" accept="image/*" hidden />
+        </div>
+        <div class="divider"></div>
+        <div class="section-title"><span class="section-number">★</span><span>Plantillas universitarias</span></div>
+        <div class="trifold-templates-grid">
+          <button class="button button-small" id="templateScienceButton" type="button">🔬 Científico</button>
+          <button class="button button-small" id="templateEssayButton" type="button">📚 Ensayo</button>
+          <button class="button button-small" id="templateProjectButton" type="button">🚀 Proyecto</button>
+        </div>
+        <div class="divider"></div>
+        <div class="trifold-sidebar-actions">
+          <button class="button button-outline button-full" id="trifoldExteriorButton" type="button">Ver cara exterior</button>
+          <button class="button button-outline button-full" id="trifoldInteriorButton" type="button">Ver cara interior</button>
+          <button class="button button-outline button-full" id="exportTrifoldPngButton" type="button">🖼 Exportar PNG</button>
+          <button class="button button-primary button-full" id="exportTrifoldButton" type="button">⇩ Exportar tríptico (PDF)</button>
+        </div>
+        <div class="sidebar-footer"><span class="status-dot"></span><span>Guardado automáticamente</span></div>
+      </aside>
+      <section class="trifold-canvas-area">
+        <div class="trifold-toolbar">
+          <div><span class="eyebrow">TRÍPTICO</span><h2 id="trifoldTitleDisplay">Mi tríptico</h2></div>
+          <div class="trifold-toolbar-actions">
+            <button class="button button-small" id="toggleFoldGuidesButton" type="button">📐 Guías de doblez</button>
+            <button class="button button-primary button-small" id="quickFlipButton" type="button">🔄 Voltear cara</button>
+            <span class="trifold-face-label" id="trifoldFaceLabel">Cara exterior</span>
+          </div>
+        </div>
+
+        <div class="trifold-element-inspector" id="trifoldElementInspector" hidden>
+          <span class="inspector-badge" id="inspectorElementType">Texto</span>
+          <div class="inspector-group">
+            <button class="button button-small" id="elemFontDown" type="button" title="Reducir fuente">A-</button>
+            <span class="inspector-value" id="elemFontSize">28px</span>
+            <button class="button button-small" id="elemFontUp" type="button" title="Aumentar fuente">A+</button>
+          </div>
+          <div class="inspector-group">
+            <button class="button button-small" id="elemAlignLeft" type="button" title="Alinear a la izquierda">⇠</button>
+            <button class="button button-small" id="elemAlignCenter" type="button" title="Centrar">≡</button>
+            <button class="button button-small" id="elemAlignRight" type="button" title="Alinear a la derecha">⇢</button>
+          </div>
+          <div class="inspector-colors">
+            <button class="color-dot" data-color="#1f3029" style="background: #1f3029" title="Oscuro"></button>
+            <button class="color-dot" data-color="#2b9a72" style="background: #2b9a72" title="Verde"></button>
+            <button class="color-dot" data-color="#3273dc" style="background: #3273dc" title="Azul"></button>
+            <button class="color-dot" data-color="#d9534f" style="background: #d9534f" title="Rojo"></button>
+            <button class="color-dot" data-color="#8a67d8" style="background: #8a67d8" title="Morado"></button>
+            <button class="color-dot" data-color="#ffffff" style="background: #ffffff; border: 1px solid #ccc" title="Blanco"></button>
+          </div>
+          <div class="inspector-group">
+            <button class="button button-small" id="elemDuplicate" type="button" title="Duplicar">⧉ Clonar</button>
+            <button class="button button-small" id="elemBringForward" type="button" title="Al frente">▲ Frente</button>
+            <button class="button button-small button-danger" id="elemDelete" type="button" title="Eliminar">🗑</button>
+          </div>
+        </div>
+
+        <div class="trifold-viewport">
+          <div class="trifold-board" id="trifoldBoard">
+            <div class="trifold-panels" id="trifoldPanels"></div>
+            <div class="trifold-fold-guides" id="trifoldFoldGuides">
+              <div class="fold-line fold-line-1"><span class="fold-tag">Pliegue 1</span></div>
+              <div class="fold-line fold-line-2"><span class="fold-tag">Pliegue 2</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="canvas-tip">Elige un estilo y una fuente. En el tríptico arrastra textos, fotos y formas; doble clic en un texto para editarlo y usa Delete para borrarlo.</p>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="app.js"></script>
+  <script src="trifold-editor.js"></script>
+  <script src="app-export.js"></script>
+  <script src="app-main.js"></script>
+</body>
+</html>
