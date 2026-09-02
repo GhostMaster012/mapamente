@@ -538,37 +538,37 @@ function loadEthicsResearchTrifold() {
     {
       id: "front",
       title: "ÉTICA FILOSÓFICA",
-      content: "Concepto, Objeto y Ramas\n\nMateria: Ética\nAlumno: Nancy Liliana Rodriguez Valdivia\nUnidad: Unidad 1 · Temas 1.1.2 y 1.1.3\nActividad 1 · Tríptico Académico\nFecha de entrega: Septiembre 2026",
+      content: "1.1.2 Concepto y objeto de estudio de la Ética\n1.1.3 Ramas de la Ética: Metaética, Normativa y Aplicada\n\nInstituto Tecnológico / Universidad",
       theme: "sky"
     },
     {
       id: "flap",
-      title: "1.1.2 ¿QUÉ ES LA ÉTICA?",
-      content: "• Concepto:\nRama de la filosofía que analiza de forma racional y crítica la moral, evaluando qué conductas humanas son correctas o incorrectas.\n\n• Etimología:\nDel griego êthos (\"carácter\", \"costumbre\").\n\n• Ética vs. Moral:\nLa moral es la práctica social cotidiana (normas y costumbres); la ética es la teoría que reflexiona y fundamenta esas normas.",
+      title: "1.1.2 CONCEPTO & ETIMOLOGÍA",
+      content: "• Concepto:\nRama de la filosofía que analiza de forma racional y crítica la moral, evaluando qué conductas humanas son correctas o incorrectas.\n\n• Etimología:\nDel griego êthos (carácter, costumbre).\n\n• Ética vs. Moral:\nLa moral es la práctica social cotidiana (normas y costumbres); la ética es la teoría que reflexiona y fundamenta esas normas.",
       theme: "mint"
     },
     {
       id: "back",
-      title: "FUENTES & BIBLIOGRAFÍA",
-      content: "1. Manual de Filosofía y Moral.\n2. Recursos de apoyo:\n• https://youtu.be/EhFvgOIAVOk\n• https://youtu.be/3p2Th6GKHo4\n\nConclusión:\nLa ética provee herramientas críticas para fundamentar nuestras decisiones libres y responsables.",
+      title: "DATOS DE ENTREGA",
+      content: "Materia: Ética\nAlumno: Nancy Liliana Rodriguez Valdivia\nNumero de la unidad: Unidad I (1.1.2 y 1.1.3)\nNumero de la actividad: Actividad 1\nNombre de la actividad: Tríptico\nBibliografía: https://youtu.be/EhFvgOIAVOk\nhttps://youtu.be/3p2Th6GKHo4\n\n---------------------------------------------\nFecha de Entrega: 7 Septiembre",
       theme: "sky"
     },
     {
       id: "inside-left",
       title: "OBJETO DE ESTUDIO",
-      content: "• Objeto Material:\nLos actos humanos, entendidos únicamente como aquellos realizados con plena conciencia, libertad y voluntad (se excluyen actos involuntarios o meramente biológicos).\n\n• Objeto Formal:\nLa moralidad de esos actos, es decir, el análisis de su bondad, rectitud o malicia intrínseca.",
+      content: "• Objeto Material:\nLos actos humanos, entendidos únicamente como aquellos realizados con plena conciencia, libertad y voluntad (excluye actos involuntarios o meramente biológicos).\n\n• Objeto Formal:\nLa moralidad de esos actos, es decir, el análisis de su bondad, rectitud o malicia.",
       theme: "mint"
     },
     {
       id: "inside-center",
       title: "1.1.3 RAMAS DE LA ÉTICA",
-      content: "• Metaética:\nEstudia el origen, significado y naturaleza de los conceptos morales. Analiza si valores como \"lo bueno\" o \"lo justo\" son hechos objetivos o invenciones humanas (¿Qué significa \"bueno\"?).\n\n• Ética Normativa:\nEstablece reglas, principios y criterios generales sobre cómo debemos actuar y qué define el buen actuar (el deber, las consecuencias o la virtud).",
+      content: "• Metaética:\nEstudia el origen, significado y naturaleza de los conceptos morales. Analiza si valores como \"lo bueno\" o \"lo justo\" son hechos objetivos o invenciones humanas (¿Qué significa \"bueno\"?).\n\n• Ética Normativa:\nEstablece reglas, principios y criterios generales sobre cómo debemos actuar y qué conductas son correctas o incorrectas (el deber, las consecuencias o la virtud).",
       theme: "sun"
     },
     {
       id: "inside-right",
-      title: "ÉTICA APLICADA & CASOS",
-      content: "• Ética Aplicada:\nAplica las teorías normativas a dilemas reales y específicos de la sociedad contemporánea.\n\n• Campos principales:\n- Bioética: Medicina, clonación, eutanasia.\n- Ética Profesional: Responsabilidad y deontología.\n- Ética Ambiental: Preservación del ecosistema y sustentabilidad.",
+      title: "ÉTICA APLICADA",
+      content: "• Ética Aplicada:\nAplica las teorías normativas a casos y dilemas reales y específicos de la sociedad y las profesiones (¿Es correcto este acto específico?).\n\n• Ejemplos y áreas:\n- Bioética: Medicina, biotecnología, vida.\n- Ética Profesional: Deontología laboral.\n- Ética Ambiental: Sustentabilidad y cuidado.",
       theme: "coral"
     }
   ]);
@@ -578,38 +578,38 @@ function loadEthicsClassTrifold() {
   loadTrifoldTemplate("Ética: Visto en clase", "minimal", "poppins", [
     {
       id: "front",
-      title: "LA ÉTICA EN EL AULA",
-      content: "Reflexión Crítica y Decisiones Reales\n\nMateria: Ética\nAlumno: Nancy Liliana Rodriguez Valdivia\nUnidad: Unidad 1 · Notas y Pizarrón\nActividad 1 · Tríptico de Clase\nFecha de entrega: Septiembre 2026",
+      title: "LA ÉTICA EN CLASE",
+      content: "1.1.2 Concepto y objeto de estudio\n1.1.3 Ramas de la Ética\n\nApuntes de Cuaderno y Esquema de Pizarrón",
       theme: "lavender"
     },
     {
       id: "flap",
-      title: "CIENCIA TEÓRICA Y PRÁCTICA",
-      content: "• Definición de clase:\nCiencia teórica y práctica que analiza racional y sistemáticamente los fundamentos del comportamiento moral humano, buscando el bien común y la vida recta.\n\n• Clave pedagógica:\nNo busca dictar qué se debe hacer, sino reflexionar críticamente sobre qué hace que una acción sea correcta o incorrecta en la vida diaria.",
+      title: "CONCEPTO VISTO EN CLASE",
+      content: "• Ciencia teórica y práctica:\nAnaliza de forma racional y sistemática los fundamentos del comportamiento moral humano, buscando el bien común y la vida recta.\n\n• Enfoque de reflexión:\nNo busca dictar qué se debe hacer, sino reflexionar críticamente sobre qué hace que una acción sea correcta o incorrecta.\n\n• Campo:\nRelaciones personales y decisiones del día a día.",
       theme: "mint"
     },
     {
       id: "back",
-      title: "SÍNTESIS DEL PIZARRÓN",
-      content: "• Las 3 ramas se fundamentan en principios morales.\n• Principio => Normas fundamentales.\n• Valor => Práctica y convicciones.\n• Moral => Criterio de correcto vs. incorrecto.\n\nBibliografía audiovisual:\n• https://youtu.be/EhFvgOIAVOk\n• https://youtu.be/3p2Th6GKHo4",
+      title: "DATOS DE ENTREGA",
+      content: "Materia: Ética\nAlumno: Nancy Liliana Rodriguez Valdivia\nNumero de la unidad: Unidad I (1.1.2 y 1.1.3)\nNumero de la actividad: Actividad 1\nNombre de la actividad: Tríptico\nBibliografía: https://youtu.be/EhFvgOIAVOk\nhttps://youtu.be/3p2Th6GKHo4\n\n---------------------------------------------\nFecha de Entrega: 7 Septiembre",
       theme: "lavender"
     },
     {
       id: "inside-left",
       title: "1. METAÉTICA (PIZARRÓN)",
-      content: "• Naturaleza de los conceptos morales:\nAnaliza de dónde provienen los valores y si los juicios morales son positivos (+) o negativos (-).\n\n• Cuestiones de fondo:\n- Ontológicas (origen del ser moral)\n- Semánticas (significado del lenguaje)\n- Epistemológicas (cómo conocemos el bien)\n\n• Dilemas abordados:\nTatuajes, madres solteras, divorcio.",
+      content: "• Naturaleza de los conceptos morales:\nAnaliza de dónde provienen los valores y si los juicios morales son (+) o (-).\n\n• Cuestiones tratadas:\n- Ontológicas (ser y origen moral)\n- Semánticas (significado del lenguaje)\n- Epistemológicas (conocimiento moral)\n\n• Dilemas analizados en clase:\nTatuajes, madre soltera, divorcio.",
       theme: "mint"
     },
     {
       id: "inside-center",
       title: "2. ÉTICA NORMATIVA",
-      content: "• Principios de actuación:\nBusca establecer normas morales claras.\n\n• Estándares mínimos:\nEstudia los valores morales para construir estándares (medidas) mínimas que orienten la conducta de las personas hacia el bien común.\n\n• Establece con rigor lo que socialmente se considera correcto e incorrecto.",
+      content: "• Principios de actuación:\nBusca establecer normas morales claras.\n\n• Estándares mínimos:\nEstudia los valores morales para construir estándares (medida) mínimos que orienten la conducta de las personas hacia el bien común.\n\n• Delimita lo correcto e incorrecto en sociedad.",
       theme: "sun"
     },
     {
       id: "inside-right",
-      title: "3. ÉTICA APLICADA EN ACCIÓN",
-      content: "• Práctica de principios:\nSe enfoca en la aplicación de principios éticos y morales en situaciones concretas y contextos específicos.\n\n• Decisiones y problemas reales:\n- Medicina y salud.\n- Negocios y comercio.\n- Medio ambiente y sustentabilidad.\n\nReflexión ética ante dilemas actuales de la sociedad.",
+      title: "3. ÉTICA APLICADA",
+      content: "• Práctica de principios:\nSe enfoca en la práctica de principios éticos y morales en situaciones correctas y contextos específicos.\n\n• Reflexión y decisiones reales:\n- Medicina\n- Negocios\n- Medio Ambiente\n\n• Conclusión de clase:\nPrincipio => Normas fundamentales\nValor => Práctica (convicciones)\nMoral = Correcto - Incorrecto",
       theme: "coral"
     }
   ]);
@@ -620,37 +620,37 @@ function loadEthicsCompleteTrifold() {
     {
       id: "front",
       title: "ÉTICA: CONCEPTO Y RAMAS",
-      content: "Investigación Teórica y Análisis de Clase\n\nMateria: Ética\nAlumno: Nancy Liliana Rodriguez Valdivia\nUnidad: Unidad 1 · Temas 1.1.2 y 1.1.3\nActividad 1 · Tríptico Comparativo\nFecha de entrega: Septiembre 2026",
+      content: "Temas 1.1.2 y 1.1.3\nInvestigación Teórica y Análisis de Clase\n\nEducación Superior Universitaria",
       theme: "sky"
     },
     {
       id: "flap",
-      title: "1.1.2 CONCEPTO Y ORIGEN",
-      content: "• Concepto unificado:\nCiencia filosófica, teórica y práctica que reflexiona críticamente sobre la moralidad de los actos humanos, buscando el bien común y la vida recta.\n\n• Etimología:\nDel griego êthos / ethos (\"carácter\", \"costumbre\").\n\n• Distinción fundamental:\nMoral = Costumbre y práctica social cotidiana.\nÉtica = Reflexión racional y fundamentación crítica.",
+      title: "1.1.2 CONCEPTO Y OBJETO",
+      content: "• Concepto:\nCiencia filosófica, teórica y práctica que analiza racional y críticamente la moral, buscando qué constituye el bien común y la vida recta.\n\n• Etimología:\nDel griego êthos / ethos (carácter, costumbre).\n\n• Objeto Material y Formal:\n- Material: Actos humanos conscientes y libres.\n- Formal: Moralidad (bondad, malicia o rectitud).",
       theme: "mint"
     },
     {
       id: "back",
-      title: "CONCLUSIÓN Y FUENTES",
-      content: "• Relación integral del pizarrón:\nLas 3 ramas convergen en normas y principios fundamentales. El valor es la práctica de las convicciones en el día a día.\n\n• Fuentes bibliográficas:\n1. Apuntes y discusión en clase presencial.\n2. Recursos audiovisuales:\n• https://youtu.be/EhFvgOIAVOk\n• https://youtu.be/3p2Th6GKHo4",
+      title: "DATOS DE ENTREGA",
+      content: "Materia: Ética\nAlumno: Nancy Liliana Rodriguez Valdivia\nNumero de la unidad: Unidad I (1.1.2 y 1.1.3)\nNumero de la actividad: Actividad 1\nNombre de la actividad: Tríptico\nBibliografía: https://youtu.be/EhFvgOIAVOk\nhttps://youtu.be/3p2Th6GKHo4\n\n---------------------------------------------\nFecha de Entrega: 7 Septiembre",
       theme: "sky"
     },
     {
       id: "inside-left",
-      title: "OBJETO DE ESTUDIO",
-      content: "• Objeto Material:\nLos actos humanos conscientes, libres y voluntarios (excluye actos involuntarios o biológicos).\n\n• Objeto Formal:\nLa moralidad de los actos: bondad, malicia o rectitud.\n\n• Dimensión cotidiana:\nEstudia las relaciones interpersonales y las decisiones diarias orientadas a la vida recta.",
+      title: "METAÉTICA (ORIGEN Y SIGNIFICADO)",
+      content: "• Fundamentos y naturaleza moral:\nEstudia si valores como \"lo bueno\" o \"lo justo\" son hechos objetivos o invenciones.\n\n• Dimensiones tratadas en clase:\n- Ontológicas, semánticas y epistemológicas.\n- Juicios morales positivos (+) y negativos (-).\n- Dilemas reales: tatuajes, maternidad en soltería, divorcio.",
       theme: "mint"
     },
     {
       id: "inside-center",
-      title: "1.1.3 METAÉTICA Y NORMATIVA",
-      content: "• Metaética (Fundamentos):\nEstudia el origen y naturaleza de lo moral (cuestiones ontológicas, semánticas y epistemológicas). Analiza juicios (+/-) ante dilemas como tatuajes o divorcio.\n\n• Ética Normativa (Reglas):\nConstruye principios y estándares mínimos de actuación para orientar la conducta hacia el bien común.",
+      title: "ÉTICA NORMATIVA (REGLAS)",
+      content: "• Búsqueda de estándares:\nConstruye principios de actuación y normas morales como estándares mínimos de orientación.\n\n• Criterios de conducta:\nDefine qué hace que una acción sea correcta o incorrecta buscando siempre el bien común (el deber, las consecuencias o la virtud).",
       theme: "sun"
     },
     {
       id: "inside-right",
-      title: "ÉTICA APLICADA Y DILEMAS",
-      content: "• Ética Aplicada:\nLleva los principios teóricos a situaciones concretas y decisiones reales de la sociedad.\n\n• Ámbitos de impacto:\n- Bioética (Medicina, vida y salud)\n- Negocios y Ética profesional\n- Medio ambiente y desarrollo sustentable\n\nPuente indispensable entre la teoría moral y la práctica diaria.",
+      title: "ÉTICA APLICADA (EN ACCIÓN)",
+      content: "• Aplicación práctica:\nLleva los principios éticos a problemas específicos y decisiones reales.\n\n• Campos de impacto:\n- Bioética (Medicina, vida y salud)\n- Negocios y Ética profesional\n- Medio ambiente y sustentabilidad\n\nPrincipio => Normas fundamentales | Valor => Práctica",
       theme: "coral"
     }
   ]);
