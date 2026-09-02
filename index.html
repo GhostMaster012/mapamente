@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Fira+Sans:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=2.7" />
+  <link rel="stylesheet" href="styles.css?v=2.8" />
 </head>
 <body>
   <main class="app-shell">
@@ -233,10 +233,20 @@
 
         <div class="trifold-element-inspector" id="trifoldElementInspector" hidden>
           <span class="inspector-badge" id="inspectorElementType">Texto</span>
-          <div class="inspector-group">
+          <div class="inspector-group" title="Tamaño de letra">
             <button class="button button-small" id="elemFontDown" type="button" title="Reducir fuente">A-</button>
             <span class="inspector-value" id="elemFontSize">28px</span>
             <button class="button button-small" id="elemFontUp" type="button" title="Aumentar fuente">A+</button>
+          </div>
+          <div class="inspector-group" title="Ancho del recuadro">
+            <button class="button button-small" id="elemWidthDown" type="button" title="Reducir ancho">W-</button>
+            <span class="inspector-value" id="elemWidthValue">300w</span>
+            <button class="button button-small" id="elemWidthUp" type="button" title="Aumentar ancho">W+</button>
+          </div>
+          <div class="inspector-group" title="Alto del recuadro">
+            <button class="button button-small" id="elemHeightDown" type="button" title="Reducir alto">H-</button>
+            <span class="inspector-value" id="elemHeightValue">70h</span>
+            <button class="button button-small" id="elemHeightUp" type="button" title="Aumentar alto">H+</button>
           </div>
           <div class="inspector-group">
             <button class="button button-small" id="elemAlignLeft" type="button" title="Alinear a la izquierda">⇠</button>
@@ -425,11 +435,11 @@
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="app.js?v=2.7"></script>
-  <script src="trifold-editor.js?v=2.7"></script>
-  <script src="app-tasks.js?v=2.7"></script>
-  <script src="app-ai.js?v=2.7"></script>
-  <script src="app-export.js?v=2.7"></script>
-  <script src="app-main.js?v=2.7"></script>
+  <script src="app.js?v=2.8"></script>
+  <script src="trifold-editor.js?v=2.8"></script>
+  <script src="app-tasks.js?v=2.8"></script>
+  <script src="app-ai.js?v=2.8"></script>
+  <script src="app-export.js?v=2.8"></script>
+  <script src="app-main.js?v=2.8"></script>
 </body>
 </html>

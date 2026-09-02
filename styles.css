@@ -241,17 +241,26 @@ body.tasks-mode .tasks-workspace { display: grid; }
 .trifold-panels { position: relative; }
 .trifold-panel { overflow: hidden; isolation: isolate; touch-action: manipulation; }
 .trifold-elements-layer { position: absolute; z-index: 5; inset: 0; pointer-events: none; }
-.trifold-element { position: absolute; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid transparent; border-radius: 8px; user-select: none; cursor: grab; pointer-events: auto; touch-action: none; }
+.trifold-element { position: absolute; display: flex; align-items: flex-start; justify-content: flex-start; overflow: visible; border: 1px solid transparent; border-radius: 8px; user-select: none; cursor: grab; pointer-events: auto; touch-action: none; transition: box-shadow .15s, border-color .15s; }
 .trifold-element:active { cursor: grabbing; }
-.trifold-element.is-selected { border-color: #267e61; outline: 3px solid rgba(43, 154, 114, .22); outline-offset: 2px; }
-.trifold-element-text { padding: 8px 12px; justify-content: flex-start; line-height: 1.15; font-weight: 700; white-space: pre-wrap; overflow-wrap: anywhere; text-align: left; }
-.trifold-element-text.field-title { font-weight: 800; line-height: 1.12; }
-.trifold-element-text.field-content { font-weight: 400; line-height: 1.6; }
+.trifold-element.is-selected { border-color: #267e61; outline: 2px solid #267e61; box-shadow: 0 0 0 4px rgba(38, 126, 97, .18), 0 8px 24px rgba(0,0,0,.1); z-index: 50 !important; }
+.trifold-element-text { padding: 8px 12px; justify-content: flex-start; line-height: 1.45; font-weight: 500; white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; text-align: left; }
+.trifold-element-text .trifold-text-inner { width: 100%; height: 100%; overflow: hidden; white-space: pre-wrap; overflow-wrap: break-word; }
+.trifold-element-text.field-title { font-weight: 800; line-height: 1.2; }
+.trifold-element-text.field-content { font-weight: 400; line-height: 1.55; }
 .trifold-element-text.field-title, .trifold-element-text.field-content { background: transparent; border-color: transparent; }
 .trifold-element-text.field-title.is-selected, .trifold-element-text.field-content.is-selected { background: rgba(255,255,255,.22); }
 .trifold-element[contenteditable="true"] { cursor: text; outline: 2px solid #267e61; user-select: text; }
 .trifold-element-image { object-fit: cover; background: #fff; box-shadow: 0 7px 18px rgba(30, 50, 42, .17); }
 .trifold-element-shape { border: 1px solid rgba(31, 57, 47, .22); border-radius: 22px; box-shadow: 0 5px 14px rgba(31, 57, 47, .08); }
+.element-resize-handle { position: absolute; width: 13px; height: 13px; background: #ffffff; border: 2.5px solid #267e61; border-radius: 50%; z-index: 30; box-shadow: 0 2px 6px rgba(0,0,0,.3); touch-action: none; }
+.element-resize-handle.handle-se { right: -6px; bottom: -6px; cursor: se-resize; }
+.element-resize-handle.handle-e { right: -6px; top: 50%; transform: translateY(-50%); cursor: e-resize; }
+.element-resize-handle.handle-s { bottom: -6px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+.element-resize-handle:hover { transform: scale(1.25); background: #267e61; }
+.element-resize-handle.handle-e:hover { transform: translateY(-50%) scale(1.25); }
+.element-resize-handle.handle-s:hover { transform: translateX(-50%) scale(1.25); }
+.trifold-board.exporting .element-resize-handle { display: none !important; }
 .trifold-board.design-editorial { --panel-line: #bc9a6a; }
 .trifold-board.design-editorial .trifold-panel h3, .trifold-board.design-editorial .trifold-element-text.field-title { letter-spacing: -.5px; }
 .trifold-board.design-pastel { --panel-line: #c1acd9; }

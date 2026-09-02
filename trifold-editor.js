@@ -120,13 +120,33 @@ function createTrifoldElementNode(element, panelCard) {
     node.style.opacity = element.opacity;
   }
 
+  if (state.trifold.activeElementId === element.id) {
+    const handleSe = document.createElement("div");
+    handleSe.className = "element-resize-handle handle-se";
+    handleSe.title = "Arrastra para cambiar ancho y alto";
+    handleSe.addEventListener("pointerdown", (e) => startTrifoldElementResizing(e, element, panelCard, node, "se"));
+    node.appendChild(handleSe);
+
+    const handleE = document.createElement("div");
+    handleE.className = "element-resize-handle handle-e";
+    handleE.title = "Arrastra para cambiar ancho";
+    handleE.addEventListener("pointerdown", (e) => startTrifoldElementResizing(e, element, panelCard, node, "e"));
+    node.appendChild(handleE);
+
+    const handleS = document.createElement("div");
+    handleS.className = "element-resize-handle handle-s";
+    handleS.title = "Arrastra para cambiar alto";
+    handleS.addEventListener("pointerdown", (e) => startTrifoldElementResizing(e, element, panelCard, node, "s"));
+    node.appendChild(handleS);
+  }
+
   node.addEventListener("pointerdown", (event) => {
-    if (event.target.closest(".element-actions")) return;
+    if (event.target.closest(".element-actions") || event.target.closest(".element-resize-handle")) return;
     event.stopPropagation();
     startTrifoldElementDragging(event, element, panelCard, node);
   });
   node.addEventListener("click", (event) => {
-    if (event.target.closest(".element-actions")) return;
+    if (event.target.closest(".element-actions") || event.target.closest(".element-resize-handle")) return;
     event.stopPropagation();
     state.trifold.activeElementId = element.id;
     renderTrifoldPanels();
@@ -218,6 +238,64 @@ function stopTrifoldElementDragging() {
   trifoldDragData = null;
   document.removeEventListener("pointermove", dragTrifoldElement);
   document.removeEventListener("pointercancel", stopTrifoldElementDragging);
+  saveState();
+}
+
+let trifoldResizeData = null;
+
+function startTrifoldElementResizing(event, element, panelCard, elementNode, direction) {
+  if (event.button !== 0) return;
+  event.stopPropagation();
+  event.preventDefault();
+  state.trifold.activeElementId = element.id;
+  const rect = panelCard.getBoundingClientRect();
+  trifoldResizeData = {
+    element,
+    panelCard,
+    elementNode,
+    direction,
+    startX: event.clientX,
+    startY: event.clientY,
+    originWidth: element.width || 200,
+    originHeight: element.height || 60,
+    panelWidth: rect.width,
+    panelHeight: rect.height
+  };
+  event.target.setPointerCapture?.(event.pointerId);
+  document.addEventListener("pointermove", resizeTrifoldElement);
+  document.addEventListener("pointerup", stopTrifoldElementResizing, { once: true });
+  document.addEventListener("pointercancel", stopTrifoldElementResizing, { once: true });
+}
+
+function resizeTrifoldElement(event) {
+  if (!trifoldResizeData) return;
+  const { element, elementNode, direction, startX, startY, originWidth, originHeight, panelWidth, panelHeight } = trifoldResizeData;
+  const deltaX = event.clientX - startX;
+  const deltaY = event.clientY - startY;
+
+  if (direction === "se" || direction === "e") {
+    const nextW = Math.max(50, Math.min(panelWidth - element.x - 4, originWidth + deltaX));
+    element.width = Math.round(nextW);
+    elementNode.style.width = `${element.width}px`;
+  }
+  if (direction === "se" || direction === "s") {
+    const nextH = Math.max(20, Math.min(panelHeight - element.y - 4, originHeight + deltaY));
+    element.height = Math.round(nextH);
+    elementNode.style.height = `${element.height}px`;
+  }
+
+  const widthValue = $("#elemWidthValue");
+  if (widthValue) widthValue.textContent = `${element.width}w`;
+  const heightValue = $("#elemHeightValue");
+  if (heightValue) heightValue.textContent = `${element.height}h`;
+}
+
+function stopTrifoldElementResizing() {
+  if (!trifoldResizeData) return;
+  trifoldResizeData = null;
+  document.removeEventListener("pointermove", resizeTrifoldElement);
+  document.removeEventListener("pointercancel", stopTrifoldElementResizing);
+  updateTrifoldElementInspector();
   saveState();
 }
 
@@ -388,6 +466,30 @@ function updateTrifoldElementInspector() {
   if (sizeValue) {
     sizeValue.textContent = `${element.fontSize || 28}px`;
   }
+  const widthValue = $("#elemWidthValue");
+  if (widthValue) {
+    widthValue.textContent = `${Math.round(element.width || 200)}w`;
+  }
+  const heightValue = $("#elemHeightValue");
+  if (heightValue) {
+    heightValue.textContent = `${Math.round(element.height || 60)}h`;
+  }
+}
+
+function changeActiveElementWidth(delta) {
+  const element = getActiveTrifoldElement();
+  if (!element) return;
+  element.width = Math.max(50, Math.min(410, Math.round((element.width || 200) + delta)));
+  renderTrifoldPanels();
+  saveState();
+}
+
+function changeActiveElementHeight(delta) {
+  const element = getActiveTrifoldElement();
+  if (!element) return;
+  element.height = Math.max(20, Math.min(680, Math.round((element.height || 60) + delta)));
+  renderTrifoldPanels();
+  saveState();
 }
 
 function changeActiveElementFontSize(delta) {
@@ -468,13 +570,15 @@ function loadTrifoldTemplate(title, design, font, panelConfigs) {
   state.trifold.activePanel = "front";
   state.trifold.activeElementId = null;
 
-  panelConfigs.forEach(({ id, title: pTitle, content: pContent, theme: pTheme, extraElements }) => {
+  panelConfigs.forEach(({ id, title: pTitle, content: pContent, theme: pTheme, extraElements, customElements }) => {
     const panel = state.trifold.panels[id];
     if (!panel) return;
     panel.title = pTitle;
     panel.content = pContent;
     panel.theme = pTheme;
-    panel.elements = createPanelTextElements(id, pTitle, pContent);
+    panel.elements = Array.isArray(customElements)
+      ? customElements.map(normalizeTrifoldElement).filter(Boolean)
+      : createPanelTextElements(id, pTitle, pContent);
     if (Array.isArray(extraElements)) {
       extraElements.forEach((el, idx) => {
         panel.elements.push({
@@ -533,42 +637,87 @@ function loadProjectTrifold() {
   ]);
 }
 
+const ETHICS_INSTITUTIONAL_BACK_TEXT = `Materia: Taller de Ética (Ago-Dic 2026)
+Alumno: Fernando Muñoz Martinez
+Numero de la unidad: Unidad I (1.1.2 y 1.1.3)
+Numero de la actividad: Actividad 2
+Nombre de la actividad: Tríptico
+Bibliografía: 
+Fieser, J. (s.f.). Ethics. Internet Encyclopedia of Philosophy. https://iep.utm.edu/ethics/
+
+Colegio de Ciencias y Humanidades. (s.f.). Ética: problemas morales y ética filosófica. Portal Académico CCH, UNAM. https://portalacademico.cch.unam.mx/filosofia1/etica
+
+Sayre-McCord, G. (2023). Metaethics. The Stanford Encyclopedia of Philosophy. https://plato.stanford.edu/entries/metaethics/
+
+---------------------------------------------
+Fecha de Entrega: 9 Septiembre de 2026`;
+
 function loadEthicsResearchTrifold() {
   loadTrifoldTemplate("Ética: Lo que llevé", "editorial", "lora", [
     {
       id: "front",
-      title: "ÉTICA FILOSÓFICA",
-      content: "1.1.2 Concepto y objeto de estudio de la Ética\n1.1.3 Ramas de la Ética: Metaética, Normativa y Aplicada\n\nInstituto Tecnológico / Universidad",
+      title: "TALLER DE ÉTICA",
+      content: "1.1.2 Concepto y objeto de estudio de la Ética\n1.1.3 Ramas de la Ética: Metaética, Ética normativa y Ética aplicada\n\nTecnológico Nacional de México\nInstituto Tecnológico",
       theme: "sky"
     },
     {
       id: "flap",
-      title: "1.1.2 CONCEPTO & ETIMOLOGÍA",
-      content: "• Concepto:\nRama de la filosofía que analiza de forma racional y crítica la moral, evaluando qué conductas humanas son correctas o incorrectas.\n\n• Etimología:\nDel griego êthos (carácter, costumbre).\n\n• Ética vs. Moral:\nLa moral es la práctica social cotidiana (normas y costumbres); la ética es la teoría que reflexiona y fundamenta esas normas.",
+      title: "TALLER DE ÉTICA",
+      content: "«La ética es la reflexión crítica y fundamentación teórica que orienta la conducta humana hacia la vida recta y el bien común.»\n\nUnidad I · Semestre Ago-Dic 2026",
       theme: "mint"
     },
     {
       id: "back",
       title: "DATOS DE ENTREGA",
-      content: "Materia: Ética\nAlumno: Nancy Liliana Rodriguez Valdivia\nNumero de la unidad: Unidad I (1.1.2 y 1.1.3)\nNumero de la actividad: Actividad 1\nNombre de la actividad: Tríptico\nBibliografía: https://youtu.be/EhFvgOIAVOk\nhttps://youtu.be/3p2Th6GKHo4\n\n---------------------------------------------\nFecha de Entrega: 7 Septiembre",
-      theme: "sky"
+      content: ETHICS_INSTITUTIONAL_BACK_TEXT,
+      theme: "sky",
+      customElements: [
+        {
+          id: "back-title",
+          type: "text",
+          field: "title",
+          text: "DATOS DE ENTREGA",
+          x: 20,
+          y: 20,
+          width: 380,
+          height: 40,
+          fontSize: 18,
+          color: "#1f3029",
+          background: "transparent",
+          opacity: 1
+        },
+        {
+          id: "back-content",
+          type: "text",
+          field: "content",
+          text: ETHICS_INSTITUTIONAL_BACK_TEXT,
+          x: 20,
+          y: 65,
+          width: 380,
+          height: 485,
+          fontSize: 12.5,
+          color: "#2a3a32",
+          background: "transparent",
+          opacity: 1
+        }
+      ]
     },
     {
       id: "inside-left",
-      title: "OBJETO DE ESTUDIO",
-      content: "• Objeto Material:\nLos actos humanos, entendidos únicamente como aquellos realizados con plena conciencia, libertad y voluntad (excluye actos involuntarios o meramente biológicos).\n\n• Objeto Formal:\nLa moralidad de esos actos, es decir, el análisis de su bondad, rectitud o malicia.",
+      title: "1.1.2 CONCEPTO Y OBJETO DE ESTUDIO",
+      content: "• Concepto de Ética:\nRama de la filosofía que reflexiona de forma racional y crítica sobre la moral, evaluando qué conductas humanas son correctas o incorrectas para alcanzar el bien común y la vida recta.\n\n• Etimología:\nProviene del griego êthos (carácter, costumbre).\n\n• Ética vs. Moral:\n- Moral: Práctica social cotidiana (normas y costumbres recibidas).\n- Ética: Teoría filosófica que reflexiona y fundamenta esas normas.\n\n• Objeto de Estudio:\n- Objeto Material: Los actos humanos realizados con plena conciencia, libertad y voluntad (excluye actos involuntarios o biológicos).\n- Objeto Formal: La moralidad de esos actos (bondad, rectitud o malicia).",
       theme: "mint"
     },
     {
       id: "inside-center",
-      title: "1.1.3 RAMAS DE LA ÉTICA",
-      content: "• Metaética:\nEstudia el origen, significado y naturaleza de los conceptos morales. Analiza si valores como \"lo bueno\" o \"lo justo\" son hechos objetivos o invenciones humanas (¿Qué significa \"bueno\"?).\n\n• Ética Normativa:\nEstablece reglas, principios y criterios generales sobre cómo debemos actuar y qué conductas son correctas o incorrectas (el deber, las consecuencias o la virtud).",
+      title: "1.1.3 RAMAS: METAÉTICA Y NORMATIVA",
+      content: "• Metaética:\nEstudia el origen, significado y naturaleza de los conceptos morales. Analiza si valores como \"lo bueno\" o \"lo justo\" son hechos objetivos o invenciones humanas (¿Qué significa \"bueno\"?).\n\n- Dimensiones de análisis:\n  • Ontológica: ¿De dónde surgen los valores morales?\n  • Semántica: Significado del lenguaje y juicios morales (+ / -).\n  • Epistemológica: Cómo conocemos lo moralmente correcto.\n  • Dilemas morales: tatuajes, maternidad en soltería, divorcio.\n\n• Ética Normativa:\nEstablece reglas, principios y criterios generales sobre cómo debemos actuar en sociedad.\n- Construye estándares mínimos de conducta orientados hacia el bien común (el deber, las consecuencias o la virtud).",
       theme: "sun"
     },
     {
       id: "inside-right",
-      title: "ÉTICA APLICADA",
-      content: "• Ética Aplicada:\nAplica las teorías normativas a casos y dilemas reales y específicos de la sociedad y las profesiones (¿Es correcto este acto específico?).\n\n• Ejemplos y áreas:\n- Bioética: Medicina, biotecnología, vida.\n- Ética Profesional: Deontología laboral.\n- Ética Ambiental: Sustentabilidad y cuidado.",
+      title: "ÉTICA APLICADA & SÍNTESIS",
+      content: "• Ética Aplicada:\nAplica las teorías y principios morales a casos y dilemas reales y específicos de la sociedad y las profesiones:\n\n- Bioética: Medicina, biotecnología, clonación y vida.\n- Ética Profesional y Negocios: Deontología, honestidad laboral y comercio justo.\n- Ética Ambiental: Preservación del ecosistema y sustentabilidad.\n\n• Relación Fundamental de Principios:\n- Principio: Norma fundamental de actuación.\n- Valor: Práctica real de convicciones en el día a día.\n- Moral: Criterio práctico de lo correcto vs. incorrecto.",
       theme: "coral"
     }
   ]);
@@ -578,38 +727,68 @@ function loadEthicsClassTrifold() {
   loadTrifoldTemplate("Ética: Visto en clase", "minimal", "poppins", [
     {
       id: "front",
-      title: "LA ÉTICA EN CLASE",
-      content: "1.1.2 Concepto y objeto de estudio\n1.1.3 Ramas de la Ética\n\nApuntes de Cuaderno y Esquema de Pizarrón",
+      title: "TALLER DE ÉTICA",
+      content: "1.1.2 Concepto y objeto de estudio de la Ética\n1.1.3 Ramas de la Ética: Metaética, Normativa y Aplicada\n\nApuntes y Síntesis de Clase Presencial",
       theme: "lavender"
     },
     {
       id: "flap",
-      title: "CONCEPTO VISTO EN CLASE",
-      content: "• Ciencia teórica y práctica:\nAnaliza de forma racional y sistemática los fundamentos del comportamiento moral humano, buscando el bien común y la vida recta.\n\n• Enfoque de reflexión:\nNo busca dictar qué se debe hacer, sino reflexionar críticamente sobre qué hace que una acción sea correcta o incorrecta.\n\n• Campo:\nRelaciones personales y decisiones del día a día.",
+      title: "TALLER DE ÉTICA",
+      content: "«No busca dictar qué se debe hacer, sino reflexionar críticamente sobre qué hace que una acción sea correcta o incorrecta en la vida diaria.»\n\nUnidad I · Semestre Ago-Dic 2026",
       theme: "mint"
     },
     {
       id: "back",
       title: "DATOS DE ENTREGA",
-      content: "Materia: Ética\nAlumno: Nancy Liliana Rodriguez Valdivia\nNumero de la unidad: Unidad I (1.1.2 y 1.1.3)\nNumero de la actividad: Actividad 1\nNombre de la actividad: Tríptico\nBibliografía: https://youtu.be/EhFvgOIAVOk\nhttps://youtu.be/3p2Th6GKHo4\n\n---------------------------------------------\nFecha de Entrega: 7 Septiembre",
-      theme: "lavender"
+      content: ETHICS_INSTITUTIONAL_BACK_TEXT,
+      theme: "lavender",
+      customElements: [
+        {
+          id: "back-title",
+          type: "text",
+          field: "title",
+          text: "DATOS DE ENTREGA",
+          x: 20,
+          y: 20,
+          width: 380,
+          height: 40,
+          fontSize: 18,
+          color: "#1f3029",
+          background: "transparent",
+          opacity: 1
+        },
+        {
+          id: "back-content",
+          type: "text",
+          field: "content",
+          text: ETHICS_INSTITUTIONAL_BACK_TEXT,
+          x: 20,
+          y: 65,
+          width: 380,
+          height: 485,
+          fontSize: 12.5,
+          color: "#2a3a32",
+          background: "transparent",
+          opacity: 1
+        }
+      ]
     },
     {
       id: "inside-left",
-      title: "1. METAÉTICA (PIZARRÓN)",
-      content: "• Naturaleza de los conceptos morales:\nAnaliza de dónde provienen los valores y si los juicios morales son (+) o (-).\n\n• Cuestiones tratadas:\n- Ontológicas (ser y origen moral)\n- Semánticas (significado del lenguaje)\n- Epistemológicas (conocimiento moral)\n\n• Dilemas analizados en clase:\nTatuajes, madre soltera, divorcio.",
+      title: "1.1.2 CONCEPTO Y OBJETO DE ESTUDIO",
+      content: "• Concepto Visto en Clase:\nCiencia teórica y práctica que analiza racional y sistemáticamente los fundamentos del comportamiento moral humano, buscando el bien común y la vida recta.\n\n• Enfoque de reflexión:\nNo impone dogmas; reflexiona sobre los juicios y las decisiones tomadas en las relaciones personales del día a día.\n\n• Objeto Material y Formal:\n- Objeto Material: Actos humanos libres, conscientes y voluntarios.\n- Objeto Formal: La moralidad de los actos (bondad, rectitud o malicia).",
       theme: "mint"
     },
     {
       id: "inside-center",
-      title: "2. ÉTICA NORMATIVA",
-      content: "• Principios de actuación:\nBusca establecer normas morales claras.\n\n• Estándares mínimos:\nEstudia los valores morales para construir estándares (medida) mínimos que orienten la conducta de las personas hacia el bien común.\n\n• Delimita lo correcto e incorrecto en sociedad.",
+      title: "1.1.3 METAÉTICA Y NORMATIVA",
+      content: "• Metaética:\nEstudia la naturaleza de los conceptos morales (¿de dónde provienen los valores? ¿son objetivos o relativos?).\n- Trata cuestiones ontológicas, semánticas y epistemológicas.\n- Analiza juicios morales (+ / -) ante dilemas reales (tatuajes, divorcio, maternidad en soltería).\n\n• Ética Normativa:\nEstudia los valores morales para construir estándares mínimos (medidas) que orienten la conducta hacia el bien común.\n- Delimita con rigor lo correcto y lo incorrecto en sociedad.",
       theme: "sun"
     },
     {
       id: "inside-right",
-      title: "3. ÉTICA APLICADA",
-      content: "• Práctica de principios:\nSe enfoca en la práctica de principios éticos y morales en situaciones correctas y contextos específicos.\n\n• Reflexión y decisiones reales:\n- Medicina\n- Negocios\n- Medio Ambiente\n\n• Conclusión de clase:\nPrincipio => Normas fundamentales\nValor => Práctica (convicciones)\nMoral = Correcto - Incorrecto",
+      title: "1.1.3 ÉTICA APLICADA & CONCLUSIONES",
+      content: "• Ética Aplicada en Acción:\nSe enfoca en la práctica de principios éticos y morales en contextos específicos y situaciones concretas:\n- Medicina y Bioética.\n- Negocios y Deontología.\n- Medio Ambiente y Sustentabilidad.\n\n• Conexiones Clave del Curso:\n- Principio ➔ Normas fundamentales.\n- Valor ➔ Práctica cotidiana de convicciones.\n- Moral ➔ Criterio de correcto vs. incorrecto.",
       theme: "coral"
     }
   ]);
@@ -619,38 +798,68 @@ function loadEthicsCompleteTrifold() {
   loadTrifoldTemplate("Ética: Integral", "editorial", "lora", [
     {
       id: "front",
-      title: "ÉTICA: CONCEPTO Y RAMAS",
-      content: "Temas 1.1.2 y 1.1.3\nInvestigación Teórica y Análisis de Clase\n\nEducación Superior Universitaria",
+      title: "TALLER DE ÉTICA",
+      content: "1.1.2 Concepto y objeto de estudio de la Ética\n1.1.3 Ramas de la Ética: Metaética, Normativa y Aplicada\n\nInvestigación Teórica y Análisis de Clase\nTecnológico Nacional de México",
       theme: "sky"
     },
     {
       id: "flap",
-      title: "1.1.2 CONCEPTO Y OBJETO",
-      content: "• Concepto:\nCiencia filosófica, teórica y práctica que analiza racional y críticamente la moral, buscando qué constituye el bien común y la vida recta.\n\n• Etimología:\nDel griego êthos / ethos (carácter, costumbre).\n\n• Objeto Material y Formal:\n- Material: Actos humanos conscientes y libres.\n- Formal: Moralidad (bondad, malicia o rectitud).",
+      title: "TALLER DE ÉTICA",
+      content: "«El estudio de la ética fundamenta nuestras decisiones conscientes hacia el bien común y la justicia social.»\n\nUnidad I · Semestre Ago-Dic 2026",
       theme: "mint"
     },
     {
       id: "back",
       title: "DATOS DE ENTREGA",
-      content: "Materia: Ética\nAlumno: Nancy Liliana Rodriguez Valdivia\nNumero de la unidad: Unidad I (1.1.2 y 1.1.3)\nNumero de la actividad: Actividad 1\nNombre de la actividad: Tríptico\nBibliografía: https://youtu.be/EhFvgOIAVOk\nhttps://youtu.be/3p2Th6GKHo4\n\n---------------------------------------------\nFecha de Entrega: 7 Septiembre",
-      theme: "sky"
+      content: ETHICS_INSTITUTIONAL_BACK_TEXT,
+      theme: "sky",
+      customElements: [
+        {
+          id: "back-title",
+          type: "text",
+          field: "title",
+          text: "DATOS DE ENTREGA",
+          x: 20,
+          y: 20,
+          width: 380,
+          height: 40,
+          fontSize: 18,
+          color: "#1f3029",
+          background: "transparent",
+          opacity: 1
+        },
+        {
+          id: "back-content",
+          type: "text",
+          field: "content",
+          text: ETHICS_INSTITUTIONAL_BACK_TEXT,
+          x: 20,
+          y: 65,
+          width: 380,
+          height: 485,
+          fontSize: 12.5,
+          color: "#2a3a32",
+          background: "transparent",
+          opacity: 1
+        }
+      ]
     },
     {
       id: "inside-left",
-      title: "METAÉTICA (ORIGEN Y SIGNIFICADO)",
-      content: "• Fundamentos y naturaleza moral:\nEstudia si valores como \"lo bueno\" o \"lo justo\" son hechos objetivos o invenciones.\n\n• Dimensiones tratadas en clase:\n- Ontológicas, semánticas y epistemológicas.\n- Juicios morales positivos (+) y negativos (-).\n- Dilemas reales: tatuajes, maternidad en soltería, divorcio.",
+      title: "1.1.2 CONCEPTO Y OBJETO DE ESTUDIO",
+      content: "• Concepto de Ética:\nCiencia teórica y práctica (filosófica) que analiza racional y críticamente la moralidad de los actos humanos, buscando el bien común y la vida recta.\n\n• Etimología:\nDel griego êthos (carácter, costumbre).\n\n• Ética vs. Moral:\n- Moral: Práctica social cotidiana (normas y costumbres).\n- Ética: Reflexión teórica que las fundamenta racionalmente.\n\n• Objeto Material y Formal:\n- Objeto Material: Actos humanos libres, conscientes y voluntarios.\n- Objeto Formal: Moralidad de los actos (bondad, malicia o rectitud).",
       theme: "mint"
     },
     {
       id: "inside-center",
-      title: "ÉTICA NORMATIVA (REGLAS)",
-      content: "• Búsqueda de estándares:\nConstruye principios de actuación y normas morales como estándares mínimos de orientación.\n\n• Criterios de conducta:\nDefine qué hace que una acción sea correcta o incorrecta buscando siempre el bien común (el deber, las consecuencias o la virtud).",
+      title: "1.1.3 METAÉTICA Y NORMATIVA",
+      content: "• Metaética (Origen y Naturaleza):\nEstudia si valores como \"lo bueno\" o \"lo justo\" son hechos objetivos o construcciones humanas.\n- Dimensiones: Ontológicas (origen moral), Semánticas (significado de términos) y Epistemológicas (conocimiento moral).\n- Analiza juicios (+ / -) ante dilemas de la vida cotidiana.\n\n• Ética Normativa (Reglas y Criterios):\nEstablece principios y estándares mínimos para orientar la conducta hacia el bien común (el deber, las consecuencias o la virtud).",
       theme: "sun"
     },
     {
       id: "inside-right",
-      title: "ÉTICA APLICADA (EN ACCIÓN)",
-      content: "• Aplicación práctica:\nLleva los principios éticos a problemas específicos y decisiones reales.\n\n• Campos de impacto:\n- Bioética (Medicina, vida y salud)\n- Negocios y Ética profesional\n- Medio ambiente y sustentabilidad\n\nPrincipio => Normas fundamentales | Valor => Práctica",
+      title: "1.1.3 ÉTICA APLICADA & CONCLUSIÓN",
+      content: "• Ética Aplicada (Casos Reales):\nAplica las teorías morales a contextos y dilemas específicos:\n- Bioética: Medicina, salud, vida y clonación.\n- Ética Profesional y Negocios: Honestidad y deontología.\n- Ética Ambiental: Preservación de la naturaleza y sustentabilidad.\n\n• Relación Fundamental:\n- Principio ➔ Norma fundamental de conducta.\n- Valor ➔ Práctica real de convicciones diarias.\n- Moral ➔ Criterio de correcto vs. incorrecto.",
       theme: "coral"
     }
   ]);
