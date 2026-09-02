@@ -147,9 +147,9 @@ function normalizeTrifoldElement(savedElement, index) {
   return {
     id: typeof savedElement.id === "string" ? savedElement.id : `element-${Date.now()}-${index}`,
     type,
-    text: typeof savedElement.text === "string" ? savedElement.text.slice(0, 500) : "Texto",
+    text: typeof savedElement.text === "string" ? savedElement.text.slice(0, 8000) : "Texto",
     src: type === "image" ? savedElement.src : "",
-    alt: typeof savedElement.alt === "string" ? savedElement.alt.slice(0, 120) : "Imagen del tríptico",
+    alt: typeof savedElement.alt === "string" ? savedElement.alt.slice(0, 200) : "Imagen del tríptico",
     x: clamp(savedElement.x, 0, 1000, 35),
     y: clamp(savedElement.y, 0, 1000, 35),
     width: clamp(savedElement.width, 40, 1000, type === "text" ? 300 : 180),
@@ -162,6 +162,27 @@ function normalizeTrifoldElement(savedElement, index) {
     align: typeof savedElement.align === "string" ? savedElement.align : "left",
     field: savedElement.field === "title" || savedElement.field === "content" ? savedElement.field : ""
   };
+}
+
+function cleanPanelElements(elements) {
+  if (!Array.isArray(elements)) return [];
+  const result = [];
+  let hasTitle = false;
+  elements.forEach((el) => {
+    if (!el) return;
+    if (el.field === "title") {
+      if (hasTitle) return;
+      hasTitle = true;
+    }
+    const isDup = result.some((prev) =>
+      prev.text && el.text &&
+      prev.text.trim() === el.text.trim() &&
+      Math.abs(prev.x - el.x) < 30 &&
+      Math.abs(prev.y - el.y) < 30
+    );
+    if (!isDup) result.push(el);
+  });
+  return result;
 }
 
 function normalizeTrifold(savedTrifold) {
@@ -177,9 +198,11 @@ function normalizeTrifold(savedTrifold) {
   trifoldPanelIds.forEach((id) => {
     const defaultPanel = defaults.panels[id];
     const savedPanel = savedPanels[id] && typeof savedPanels[id] === "object" ? savedPanels[id] : {};
-    const elements = Array.isArray(savedPanel.elements)
-      ? savedPanel.elements.map(normalizeTrifoldElement).filter(Boolean)
-      : createPanelTextElements(id, savedPanel.title || defaultPanel.title, savedPanel.content || defaultPanel.content);
+    const elements = cleanPanelElements(
+      Array.isArray(savedPanel.elements)
+        ? savedPanel.elements.map(normalizeTrifoldElement).filter(Boolean)
+        : createPanelTextElements(id, savedPanel.title || defaultPanel.title, savedPanel.content || defaultPanel.content)
+    );
     panels[id] = {
       title: typeof savedPanel.title === "string" ? savedPanel.title : defaultPanel.title,
       content: typeof savedPanel.content === "string" ? savedPanel.content : defaultPanel.content,

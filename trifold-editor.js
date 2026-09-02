@@ -9,7 +9,7 @@ function getTrifoldPanel(id) {
   panel.title = typeof panel.title === "string" ? panel.title : "Nuevo panel";
   panel.content = typeof panel.content === "string" ? panel.content : "";
   panel.theme = trifoldThemes.includes(panel.theme) ? panel.theme : "mint";
-  panel.elements = Array.isArray(panel.elements) ? panel.elements.map(normalizeTrifoldElement).filter(Boolean) : [];
+  panel.elements = cleanPanelElements(Array.isArray(panel.elements) ? panel.elements.map(normalizeTrifoldElement).filter(Boolean) : []);
   return panel;
 }
 
@@ -20,7 +20,7 @@ function getVisibleTrifoldPanelIds() {
 function syncTrifoldField(element, text) {
   if (!element.field) return;
   const panel = getTrifoldPanel(state.trifold.activePanel);
-  element.text = text.slice(0, element.field === "title" ? 70 : 1200);
+  element.text = text.slice(0, element.field === "title" ? 200 : 8000);
   if (element.field === "title") {
     panel.title = element.text;
     if (trifoldPanelTitle) trifoldPanelTitle.value = element.text;
@@ -43,7 +43,7 @@ function beginTrifoldInlineEdit(node, element) {
   selection.addRange(range);
   const finish = () => {
     if (node.dataset.editing !== "true") return;
-    const limit = element.field === "title" ? 70 : element.field === "content" ? 1200 : 500;
+    const limit = element.field === "title" ? 200 : 8000;
     const text = node.innerText.split(String.fromCharCode(160)).join(" ").slice(0, limit);
     if (element.field) syncTrifoldField(element, text);
     else element.text = text;
@@ -576,9 +576,11 @@ function loadTrifoldTemplate(title, design, font, panelConfigs) {
     panel.title = pTitle;
     panel.content = pContent;
     panel.theme = pTheme;
-    panel.elements = Array.isArray(customElements)
-      ? customElements.map(normalizeTrifoldElement).filter(Boolean)
-      : createPanelTextElements(id, pTitle, pContent);
+    panel.elements = cleanPanelElements(
+      Array.isArray(customElements)
+        ? customElements.map(normalizeTrifoldElement).filter(Boolean)
+        : createPanelTextElements(id, pTitle, pContent)
+    );
     if (Array.isArray(extraElements)) {
       extraElements.forEach((el, idx) => {
         panel.elements.push({

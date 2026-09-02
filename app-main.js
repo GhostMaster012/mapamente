@@ -20,7 +20,7 @@ trifoldPanelSelect.addEventListener("change", () => {
 
 trifoldPanelTitle.addEventListener("input", () => {
   const panel = getTrifoldPanel(state.trifold.activePanel);
-  panel.title = trifoldPanelTitle.value.slice(0, 70);
+  panel.title = trifoldPanelTitle.value.slice(0, 200);
   const titleElement = panel.elements.find((element) => element.field === "title");
   if (titleElement) titleElement.text = panel.title;
   renderTrifoldPanels();
@@ -29,7 +29,7 @@ trifoldPanelTitle.addEventListener("input", () => {
 
 trifoldPanelContent.addEventListener("input", () => {
   const panel = getTrifoldPanel(state.trifold.activePanel);
-  panel.content = trifoldPanelContent.value.slice(0, 1200);
+  panel.content = trifoldPanelContent.value.slice(0, 8000);
   const contentElement = panel.elements.find((element) => element.field === "content");
   if (contentElement) contentElement.text = panel.content;
   renderTrifoldPanels();
