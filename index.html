@@ -19,6 +19,7 @@
     <header class="topbar">
       <div class="brand"><span class="brand-mark">✦</span><span>Mapa<span class="brand-accent">Mente</span></span></div>
       <div class="topbar-actions">
+        <button class="button button-ghost" id="tasksButton" type="button">🎓 Mis Tareas</button>
         <button class="button button-ghost" id="trifoldButton" type="button">Crear tríptico</button>
         <button class="button button-ghost" id="fullscreenButton" type="button">▣ Pantalla completa</button>
         <button class="button button-ghost" id="ethicsButton" type="button">Mapa completo</button>
@@ -260,12 +261,81 @@
         </div>
         <p class="canvas-tip">Elige un estilo y una fuente. En el tríptico arrastra textos, fotos y formas; doble clic en un texto para editarlo y usa Delete para borrarlo.</p>
       </section>
+    <section class="tasks-workspace" id="tasksWorkspace" hidden>
+      <aside class="tasks-sidebar">
+        <div class="sidebar-heading">
+          <span class="eyebrow">VIDA UNIVERSITARIA</span>
+          <h1>Tareas & Apuntes</h1>
+          <p>Registra tus tareas y apuntes rápidos por materia.</p>
+        </div>
+
+        <form id="taskForm" class="form-stack">
+          <label class="field-label" for="taskTitleInput">Título de la tarea o apunte</label>
+          <input class="text-input" id="taskTitleInput" type="text" placeholder="Ej. Lectura Capítulo 4 de Bioética" maxlength="100" required />
+          
+          <div class="form-row-2">
+            <div>
+              <label class="field-label" for="taskSubjectInput">Materia</label>
+              <input class="text-input" id="taskSubjectInput" type="text" placeholder="Ej. Ética" maxlength="50" />
+            </div>
+            <div>
+              <label class="field-label" for="taskCategorySelect">Categoría</label>
+              <select class="text-input" id="taskCategorySelect">
+                <option value="Tarea">Tarea</option>
+                <option value="Lectura">Lectura</option>
+                <option value="Proyecto">Proyecto</option>
+                <option value="Examen">Examen</option>
+                <option value="Apunte">Apunte</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="field-label" for="taskDueDateInput">Fecha / Plazo</label>
+          <input class="text-input" id="taskDueDateInput" type="text" placeholder="Ej. Este viernes / 24 Sept" maxlength="40" />
+
+          <label class="field-label" for="taskNotesInput">Puntos clave / Ideas (1 por línea)</label>
+          <textarea class="text-input textarea task-notes-input" id="taskNotesInput" placeholder="Escribe ideas o apuntes... (se podrán convertir a mapa con 1 clic)" rows="5"></textarea>
+
+          <button class="button button-dark button-full" type="submit">＋ Guardar tarea / apunte</button>
+        </form>
+
+        <div class="sidebar-footer">
+          <span class="status-dot"></span>
+          <span>Guardado automáticamente</span>
+        </div>
+      </aside>
+
+      <section class="tasks-main-area">
+        <div class="tasks-toolbar">
+          <div>
+            <span class="eyebrow">TABLERO ACADÉMICO</span>
+            <h2>Mis Pendientes y Apuntes</h2>
+          </div>
+          <div class="tasks-filter-bar">
+            <span class="task-count-badge" id="taskCountBadge">0 pendientes</span>
+            <select class="text-input toolbar-select" id="taskSubjectFilter">
+              <option value="all">Todas las materias</option>
+            </select>
+            <select class="text-input toolbar-select" id="taskCategoryFilter">
+              <option value="all">Todas las categorías</option>
+              <option value="Tarea">Tareas</option>
+              <option value="Lectura">Lecturas</option>
+              <option value="Proyecto">Proyectos</option>
+              <option value="Examen">Exámenes</option>
+              <option value="Apunte">Apuntes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="tasks-grid" id="tasksList"></div>
+      </section>
     </section>
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="app.js"></script>
   <script src="trifold-editor.js"></script>
+  <script src="app-tasks.js"></script>
   <script src="app-export.js"></script>
   <script src="app-main.js"></script>
 </body>

@@ -110,6 +110,17 @@ document.querySelectorAll(".color-dot").forEach((dot) => {
   dot.addEventListener("click", () => setActiveElementColor(dot.dataset.color));
 });
 
+$("#tasksButton")?.addEventListener("click", toggleTasksMode);
+$("#taskForm")?.addEventListener("submit", addTask);
+$("#taskSubjectFilter")?.addEventListener("change", (e) => {
+  taskFilterSubject = e.target.value;
+  renderTasks();
+});
+$("#taskCategoryFilter")?.addEventListener("change", (e) => {
+  taskFilterCategory = e.target.value;
+  renderTasks();
+});
+
 $("#connectButton").addEventListener("click", connectNodes);
 $("#arrangeButton").addEventListener("click", arrangeNodes);
 $("#selectAllButton").addEventListener("click", selectAllNodes);
@@ -134,3 +145,4 @@ if (state.nodes.length && state.layoutVersion !== 4) {
 } else {
   render();
 }
+renderTasks();

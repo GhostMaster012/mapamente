@@ -10,7 +10,6 @@ function getTrifoldPanel(id) {
   panel.content = typeof panel.content === "string" ? panel.content : "";
   panel.theme = trifoldThemes.includes(panel.theme) ? panel.theme : "mint";
   panel.elements = Array.isArray(panel.elements) ? panel.elements.map(normalizeTrifoldElement).filter(Boolean) : [];
-  panel.elements = ensurePanelTextElements(panel.elements, id, panel.title, panel.content);
   return panel;
 }
 
@@ -283,14 +282,18 @@ function deleteActiveTrifoldElement() {
   if (!activeId) return;
   const element = panel.elements.find((item) => item.id === activeId);
   if (!element) return;
-  if (element.field) {
-    syncTrifoldField(element, "");
-  } else {
-    panel.elements = panel.elements.filter((item) => item.id !== activeId);
+  if (element.field === "title") {
+    panel.title = "";
+    if (trifoldPanelTitle) trifoldPanelTitle.value = "";
+  } else if (element.field === "content") {
+    panel.content = "";
+    if (trifoldPanelContent) trifoldPanelContent.value = "";
   }
+  panel.elements = panel.elements.filter((item) => item.id !== activeId);
   state.trifold.activeElementId = null;
   renderTrifoldPanels();
   updateTrifoldPanelForm();
+  updateTrifoldElementInspector();
   saveState();
 }
 

@@ -104,15 +104,10 @@ function createPanelTextElements(panelId, title, content) {
 }
 
 function ensurePanelTextElements(elements, panelId, title, content) {
-  const normalized = Array.isArray(elements) ? elements : [];
-  const titleElement = normalized.find((element) => element.field === "title") || createPanelTextElements(panelId, title, content)[0];
-  const contentElement = normalized.find((element) => element.field === "content") || createPanelTextElements(panelId, title, content)[1];
-  titleElement.text = title;
-  titleElement.id = `${panelId}-title`;
-  contentElement.text = content;
-  contentElement.id = `${panelId}-content`;
-  const customElements = normalized.filter((element) => element !== titleElement && element !== contentElement);
-  return [titleElement, ...customElements.slice(0, 38), contentElement];
+  if (Array.isArray(elements)) {
+    return elements.map(normalizeTrifoldElement).filter(Boolean);
+  }
+  return createPanelTextElements(panelId, title, content);
 }
 
 function createDefaultTrifold() {
@@ -164,6 +159,7 @@ function normalizeTrifoldElement(savedElement, index) {
     background: typeof savedElement.background === "string" ? savedElement.background : "#ffffff",
     opacity: clamp(savedElement.opacity, .1, 1, .8),
     rotation: clamp(savedElement.rotation, -180, 180, 0),
+    align: typeof savedElement.align === "string" ? savedElement.align : "left",
     field: savedElement.field === "title" || savedElement.field === "content" ? savedElement.field : ""
   };
 }
@@ -181,16 +177,14 @@ function normalizeTrifold(savedTrifold) {
   trifoldPanelIds.forEach((id) => {
     const defaultPanel = defaults.panels[id];
     const savedPanel = savedPanels[id] && typeof savedPanels[id] === "object" ? savedPanels[id] : {};
+    const elements = Array.isArray(savedPanel.elements)
+      ? savedPanel.elements.map(normalizeTrifoldElement).filter(Boolean)
+      : createPanelTextElements(id, savedPanel.title || defaultPanel.title, savedPanel.content || defaultPanel.content);
     panels[id] = {
       title: typeof savedPanel.title === "string" ? savedPanel.title : defaultPanel.title,
       content: typeof savedPanel.content === "string" ? savedPanel.content : defaultPanel.content,
       theme: trifoldThemes.includes(savedPanel.theme) ? savedPanel.theme : defaultPanel.theme,
-      elements: ensurePanelTextElements(
-        Array.isArray(savedPanel.elements) ? savedPanel.elements.map(normalizeTrifoldElement).filter(Boolean) : [],
-        id,
-        typeof savedPanel.title === "string" ? savedPanel.title : defaultPanel.title,
-        typeof savedPanel.content === "string" ? savedPanel.content : defaultPanel.content
-      )
+      elements
     };
   });
 
@@ -226,7 +220,11 @@ function createInitialState() {
       bibliography: "",
       dueDate: ""
     },
-    trifold: createDefaultTrifold()
+    trifold: createDefaultTrifold(),
+    tasks: [
+      { id: "task-1", title: "Lectura: Ética y Justicia", subject: "Ética", category: "Lectura", dueDate: "Viernes", notes: "1. Sócrates y la virtud\n2. Platón y el alma\n3. Aristóteles y el justo medio\n4. Epicuro y la ataraxia", completed: false },
+      { id: "task-2", title: "Tríptico de Investigación", subject: "Metodología", category: "Proyecto", dueDate: "Próxima semana", notes: "1. Resumen ejecutivo\n2. Metodología experimental\n3. Resultados\n4. Conclusiones", completed: false }
+    ]
   };
 }
 
@@ -242,7 +240,8 @@ function loadState() {
         mapTheme: mapThemes.includes(saved.mapTheme) ? saved.mapTheme : initialState.mapTheme,
         mapFont: Object.prototype.hasOwnProperty.call(trifoldFonts, saved.mapFont) ? saved.mapFont : initialState.mapFont,
         metadata: { ...initialState.metadata, ...(saved.metadata || {}) },
-        trifold: normalizeTrifold(saved.trifold)
+        trifold: normalizeTrifold(saved.trifold),
+        tasks: Array.isArray(saved.tasks) ? saved.tasks : initialState.tasks
       };
     }
   } catch (error) {
