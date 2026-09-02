@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Fira+Sans:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=2.5" />
+  <link rel="stylesheet" href="styles.css?v=2.6" />
 </head>
 <body>
   <main class="app-shell">
@@ -199,7 +199,14 @@
           <input id="trifoldImageInput" type="file" accept="image/*" hidden />
         </div>
         <div class="divider"></div>
-        <div class="section-title"><span class="section-number">★</span><span>Plantillas universitarias</span></div>
+        <div class="section-title"><span class="section-number">★</span><span>Trípticos de Ética (1.1.2 y 1.1.3)</span></div>
+        <div class="trifold-templates-grid">
+          <button class="button button-small" id="templateEthicsResearchBtn" type="button" title="Cargar tríptico con lo que llevaste">🏛️ Lo que llevé</button>
+          <button class="button button-small" id="templateEthicsClassBtn" type="button" title="Cargar tríptico con las notas y pizarrón de clase">📝 Visto en clase</button>
+          <button class="button button-small" id="templateEthicsCompleteBtn" type="button" title="Cargar tríptico integral combinando ambos">🌟 Integral</button>
+        </div>
+        <div class="divider"></div>
+        <div class="section-title"><span class="section-number">★</span><span>Otras plantillas</span></div>
         <div class="trifold-templates-grid">
           <button class="button button-small" id="templateScienceButton" type="button">🔬 Científico</button>
           <button class="button button-small" id="templateEssayButton" type="button">📚 Ensayo</button>
@@ -418,11 +425,11 @@
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="app.js?v=2.5"></script>
-  <script src="trifold-editor.js?v=2.5"></script>
-  <script src="app-tasks.js?v=2.5"></script>
-  <script src="app-ai.js?v=2.5"></script>
-  <script src="app-export.js?v=2.5"></script>
-  <script src="app-main.js?v=2.5"></script>
+  <script src="app.js?v=2.6"></script>
+  <script src="trifold-editor.js?v=2.6"></script>
+  <script src="app-tasks.js?v=2.6"></script>
+  <script src="app-ai.js?v=2.6"></script>
+  <script src="app-export.js?v=2.6"></script>
+  <script src="app-main.js?v=2.6"></script>
 </body>
 </html>
