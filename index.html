@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Fira+Sans:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=2.3" />
+  <link rel="stylesheet" href="styles.css?v=2.4" />
 </head>
 <body>
   <main class="app-shell">
@@ -393,12 +393,21 @@
             </div>
 
             <div>
-              <label class="field-label" for="aiModelSelect">Modelo de OpenAI</label>
+              <label class="field-label" for="aiModelSelect">Modelo de OpenAI / Luna</label>
               <select class="text-input" id="aiModelSelect">
-                <option value="gpt-4o-mini">GPT-4o Mini (Recomendado: Rápido y muy económico)</option>
-                <option value="gpt-4o">GPT-4o (Máxima capacidad y razonamiento)</option>
-                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                <option value="gpt-5.6-luna">GPT-5.6 Luna (Ultra rápido y económico)</option>
+                <option value="gpt-5.6-sol">GPT-5.6 Sol (Máxima potencia y análisis)</option>
+                <option value="gpt-4o-mini" selected>GPT-4o Mini (Inteligente, balanceado y veloz)</option>
+                <option value="gpt-4o">GPT-4o (Creativo y multimodal)</option>
+                <option value="o3-mini">o3-mini (Razonamiento profundo)</option>
+                <option value="o1-mini">o1-mini (Razonamiento STEM)</option>
+                <option value="custom">Personalizado (Escribir nombre exacto)...</option>
               </select>
+            </div>
+
+            <div id="aiCustomModelContainer" hidden>
+              <label class="field-label" for="aiCustomModelInput">Nombre de Modelo Personalizado</label>
+              <input class="text-input" id="aiCustomModelInput" type="text" placeholder="Ej. gpt-5.6-luna o ft:gpt-..." />
             </div>
 
             <button class="button button-dark button-full" id="aiSaveSettingsBtn" type="button">💾 Guardar Configuración de IA</button>
@@ -409,11 +418,11 @@
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="app.js?v=2.3"></script>
-  <script src="trifold-editor.js?v=2.3"></script>
-  <script src="app-tasks.js?v=2.3"></script>
-  <script src="app-ai.js?v=2.3"></script>
-  <script src="app-export.js?v=2.3"></script>
-  <script src="app-main.js?v=2.3"></script>
+  <script src="app.js?v=2.4"></script>
+  <script src="trifold-editor.js?v=2.4"></script>
+  <script src="app-tasks.js?v=2.4"></script>
+  <script src="app-ai.js?v=2.4"></script>
+  <script src="app-export.js?v=2.4"></script>
+  <script src="app-main.js?v=2.4"></script>
 </body>
 </html>

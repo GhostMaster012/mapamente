@@ -149,7 +149,10 @@ document.querySelectorAll(".ai-tab-button").forEach((btn) => {
 $("#aiSaveSettingsBtn")?.addEventListener("click", () => {
   const key = $("#aiApiKeyInput")?.value || "";
   const pin = $("#aiPinInput")?.value || "";
-  const model = $("#aiModelSelect")?.value || "gpt-4o-mini";
+  let model = $("#aiModelSelect")?.value || "gpt-4o-mini";
+  if (model === "custom") {
+    model = $("#aiCustomModelInput")?.value.trim() || "gpt-4o-mini";
+  }
   saveAiSettings(key, pin, model);
   window.alert("✅ Configuración de IA guardada correctamente.");
   closeAiModal();

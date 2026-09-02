@@ -42,21 +42,28 @@ async function callOpenAI(systemPrompt, userPrompt) {
   }
 
   const model = getStoredModel();
+  const isReasoningModel = model.startsWith("o1") || model.startsWith("o3");
+
+  const bodyPayload = {
+    model,
+    messages: [
+      { role: isReasoningModel ? "developer" : "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
+    ],
+    response_format: { type: "json_object" }
+  };
+
+  if (!isReasoningModel) {
+    bodyPayload.temperature = 0.7;
+  }
+
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`
     },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      temperature: 0.7,
-      response_format: { type: "json_object" }
-    })
+    body: JSON.stringify(bodyPayload)
   });
 
   if (!response.ok) {
@@ -236,10 +243,24 @@ function openAiModal(tab = "map") {
   const apiKeyInput = document.getElementById("aiApiKeyInput");
   const pinInput = document.getElementById("aiPinInput");
   const modelSelect = document.getElementById("aiModelSelect");
+  const customContainer = document.getElementById("aiCustomModelContainer");
+  const customInput = document.getElementById("aiCustomModelInput");
 
   if (apiKeyInput) apiKeyInput.value = getStoredApiKey();
   if (pinInput) pinInput.value = getStoredPin();
-  if (modelSelect) modelSelect.value = getStoredModel();
+
+  const storedModel = getStoredModel();
+  if (modelSelect) {
+    const optionExists = Array.from(modelSelect.options).some((opt) => opt.value === storedModel);
+    if (optionExists) {
+      modelSelect.value = storedModel;
+      if (customContainer) customContainer.hidden = true;
+    } else {
+      modelSelect.value = "custom";
+      if (customContainer) customContainer.hidden = false;
+      if (customInput) customInput.value = storedModel;
+    }
+  }
 
   switchAiTab(tab);
 }
@@ -257,3 +278,8 @@ function switchAiTab(tabName) {
     panel.hidden = panel.dataset.aiTab !== tabName;
   });
 }
+
+document.getElementById("aiModelSelect")?.addEventListener("change", (e) => {
+  const customContainer = document.getElementById("aiCustomModelContainer");
+  if (customContainer) customContainer.hidden = e.target.value !== "custom";
+});
