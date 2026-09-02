@@ -140,6 +140,87 @@ $("#clearButton").addEventListener("click", clearMap);
 $("#exportButton").addEventListener("click", exportPdf);
 window.addEventListener("resize", renderConnections);
 
+$("#aiButton")?.addEventListener("click", () => openAiModal("map"));
+$("#closeAiModalBtn")?.addEventListener("click", closeAiModal);
+document.querySelectorAll(".ai-tab-button").forEach((btn) => {
+  btn.addEventListener("click", () => switchAiTab(btn.dataset.aiTab));
+});
+
+$("#aiSaveSettingsBtn")?.addEventListener("click", () => {
+  const key = $("#aiApiKeyInput")?.value || "";
+  const pin = $("#aiPinInput")?.value || "";
+  const model = $("#aiModelSelect")?.value || "gpt-4o-mini";
+  saveAiSettings(key, pin, model);
+  window.alert("✅ Configuración de IA guardada correctamente.");
+  closeAiModal();
+});
+
+$("#aiGenerateMapBtn")?.addEventListener("click", async () => {
+  const promptText = $("#aiMapPrompt")?.value.trim();
+  if (!promptText) {
+    window.alert("Por favor escribe un tema o texto para generar el mapa.");
+    return;
+  }
+  const btn = $("#aiGenerateMapBtn");
+  const originalText = btn.textContent;
+  try {
+    btn.textContent = "⏳ Generando mapa con IA...";
+    btn.disabled = true;
+    await generateMapWithAi(promptText);
+    closeAiModal();
+  } catch (err) {
+    console.error(err);
+    window.alert(err.message || "Error al generar mapa con IA.");
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+});
+
+$("#aiGenerateTrifoldBtn")?.addEventListener("click", async () => {
+  const promptText = $("#aiTrifoldPrompt")?.value.trim();
+  if (!promptText) {
+    window.alert("Por favor escribe el tema de tu tríptico.");
+    return;
+  }
+  const btn = $("#aiGenerateTrifoldBtn");
+  const originalText = btn.textContent;
+  try {
+    btn.textContent = "⏳ Redactando tríptico con IA...";
+    btn.disabled = true;
+    await generateTrifoldWithAi(promptText);
+    closeAiModal();
+  } catch (err) {
+    console.error(err);
+    window.alert(err.message || "Error al generar tríptico con IA.");
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+});
+
+$("#aiGenerateTasksBtn")?.addEventListener("click", async () => {
+  const promptText = $("#aiTasksPrompt")?.value.trim();
+  if (!promptText) {
+    window.alert("Por favor pega las indicaciones o apuntes para extraer tareas.");
+    return;
+  }
+  const btn = $("#aiGenerateTasksBtn");
+  const originalText = btn.textContent;
+  try {
+    btn.textContent = "⏳ Extrayendo tareas con IA...";
+    btn.disabled = true;
+    await generateTasksWithAi(promptText);
+    closeAiModal();
+  } catch (err) {
+    console.error(err);
+    window.alert(err.message || "Error al extraer tareas con IA.");
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+});
+
 if (state.nodes.length && state.layoutVersion !== 4) {
   arrangeNodes();
 } else {

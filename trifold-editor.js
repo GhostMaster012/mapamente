@@ -67,7 +67,7 @@ function beginTrifoldInlineEdit(node, element) {
 }
 
 function createTrifoldElementNode(element, panelCard) {
-  const node = document.createElement(element.type === "image" ? "img" : "div");
+  const node = document.createElement("div");
   const fieldClass = element.field ? ` field-${element.field}` : "";
   node.className = `trifold-element trifold-element-${element.type}${fieldClass}${state.trifold.activeElementId === element.id ? " is-selected" : ""}`;
   node.dataset.elementId = element.id;
@@ -77,12 +77,38 @@ function createTrifoldElementNode(element, panelCard) {
   node.style.height = `${element.height}px`;
   node.style.transform = `rotate(${element.rotation || 0}deg)`;
   node.style.zIndex = String(10 + panelCard.querySelectorAll(".trifold-element").length);
+
+  const actions = document.createElement("div");
+  actions.className = "element-actions";
+  const delBtn = document.createElement("button");
+  delBtn.className = "element-action-btn del-btn";
+  delBtn.type = "button";
+  delBtn.textContent = "×";
+  delBtn.title = "Eliminar elemento";
+  delBtn.addEventListener("pointerdown", (e) => e.stopPropagation());
+  delBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    state.trifold.activeElementId = element.id;
+    deleteActiveTrifoldElement();
+  });
+  actions.appendChild(delBtn);
+  node.appendChild(actions);
+
   if (element.type === "image") {
-    node.src = element.src;
-    node.alt = element.alt || "Imagen del tríptico";
-    node.draggable = false;
+    const img = document.createElement("img");
+    img.src = element.src;
+    img.alt = element.alt || "Imagen del tríptico";
+    img.draggable = false;
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "inherit";
+    node.appendChild(img);
   } else if (element.type === "text") {
-    node.textContent = element.text || (element.field === "title" ? "Sin título" : "Escribe el contenido...");
+    const textSpan = document.createElement("div");
+    textSpan.className = "trifold-text-inner";
+    textSpan.textContent = element.text || (element.field === "title" ? "Sin título" : "Escribe el contenido...");
+    node.appendChild(textSpan);
     node.style.fontSize = `${element.fontSize}px`;
     node.style.color = element.color;
     if (element.align) {
@@ -93,19 +119,24 @@ function createTrifoldElementNode(element, panelCard) {
     node.style.background = element.background;
     node.style.opacity = element.opacity;
   }
+
   node.addEventListener("pointerdown", (event) => {
+    if (event.target.closest(".element-actions")) return;
     event.stopPropagation();
     startTrifoldElementDragging(event, element, panelCard, node);
   });
   node.addEventListener("click", (event) => {
+    if (event.target.closest(".element-actions")) return;
     event.stopPropagation();
     state.trifold.activeElementId = element.id;
     renderTrifoldPanels();
   });
   if (element.type === "text") {
     node.addEventListener("dblclick", (event) => {
+      if (event.target.closest(".element-actions")) return;
       event.stopPropagation();
-      beginTrifoldInlineEdit(node, element);
+      const textSpan = node.querySelector(".trifold-text-inner") || node;
+      beginTrifoldInlineEdit(textSpan, element);
     });
   }
   return node;
