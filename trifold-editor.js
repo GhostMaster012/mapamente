@@ -362,22 +362,8 @@ function setTrifoldFace(face) {
 }
 
 function toggleTrifoldMode() {
-  const mapWorkspace = $("#mapWorkspace");
-  const enabled = trifoldWorkspace.hidden;
-  if (enabled) {
-    document.body.classList.add("trifold-mode");
-    document.body.classList.remove("focus-mode");
-    trifoldWorkspace.hidden = false;
-    mapWorkspace.hidden = true;
-    $("#trifoldButton").textContent = "Volver al mapa";
-    renderTrifold();
-  } else {
-    document.body.classList.remove("trifold-mode");
-    trifoldWorkspace.hidden = true;
-    mapWorkspace.hidden = false;
-    $("#trifoldButton").textContent = "Crear tríptico";
-    renderConnections();
-  }
+  const isHidden = trifoldWorkspace ? trifoldWorkspace.hidden : true;
+  switchToWorkspace(isHidden ? "trifold" : "map");
 }
 
 function getActiveTrifoldElement() {

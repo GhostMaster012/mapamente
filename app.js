@@ -1247,4 +1247,39 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+function switchToWorkspace(mode) {
+  const mapWorkspace = $("#mapWorkspace");
+  const trifoldWorkspace = $("#trifoldWorkspace");
+  const tasksWorkspace = $("#tasksWorkspace");
+  const trifoldBtn = $("#trifoldButton");
+  const tasksBtn = $("#tasksButton");
+
+  document.body.classList.remove("trifold-mode", "tasks-mode");
+
+  if (mode === "trifold") {
+    document.body.classList.add("trifold-mode");
+    if (mapWorkspace) mapWorkspace.hidden = true;
+    if (trifoldWorkspace) trifoldWorkspace.hidden = false;
+    if (tasksWorkspace) tasksWorkspace.hidden = true;
+    if (trifoldBtn) trifoldBtn.textContent = "Volver al mapa";
+    if (tasksBtn) tasksBtn.textContent = "🎓 Mis Tareas";
+    if (typeof renderTrifold === "function") renderTrifold();
+  } else if (mode === "tasks") {
+    document.body.classList.add("tasks-mode");
+    if (mapWorkspace) mapWorkspace.hidden = true;
+    if (trifoldWorkspace) trifoldWorkspace.hidden = true;
+    if (tasksWorkspace) tasksWorkspace.hidden = false;
+    if (trifoldBtn) trifoldBtn.textContent = "Crear tríptico";
+    if (tasksBtn) tasksBtn.textContent = "Volver al mapa";
+    if (typeof renderTasks === "function") renderTasks();
+  } else {
+    if (mapWorkspace) mapWorkspace.hidden = false;
+    if (trifoldWorkspace) trifoldWorkspace.hidden = true;
+    if (tasksWorkspace) tasksWorkspace.hidden = true;
+    if (trifoldBtn) trifoldBtn.textContent = "Crear tríptico";
+    if (tasksBtn) tasksBtn.textContent = "🎓 Mis Tareas";
+    if (typeof renderConnections === "function") renderConnections();
+  }
+}
+
 
